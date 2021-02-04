@@ -51,9 +51,10 @@ RUN echo $TIMEZONE > /etc/timezone ; \
 
 # установка дополнительных пакетов
 RUN apt install --quiet --yes --no-install-recommends \
-        bash bash-completion ;
+        bash bash-completion \ 
+        make sshpass ;
 
-# установка postfix
+# установка ansible
 RUN apt install --quiet --yes --no-install-recommends \
         ansible ;
 
@@ -64,4 +65,3 @@ RUN apt autoremove --yes ; \
 
 # backup origin config
 RUN cp -R /etc/ansible /etc/ansible-origin ;
-
