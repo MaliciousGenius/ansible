@@ -1,0 +1,9 @@
+version: '3.6'
+
+services:  
+  ansible:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: maliciousgenius/ansible:latest
+    container_name: ansible
