@@ -2,35 +2,31 @@
 FROM ubuntu
 
 # подпись
-LABEL maintainer="Dmitriy Detkov"
+LABEL maintainer="Dmitry Detkov"
 LABEL email="maliciousgenius@gmail.com"
 LABEL tel="+79604565686"
 
-# apt conf
+# опцци пакетного менеджера
 ENV DEBIAN_FRONTEND=noninteractive
-
-# apt update & upgrade
-RUN apt update --quiet ; \
-    apt upgrade --quiet --yes ;
-
-# configure deb-backend
 RUN echo "debconf debconf/frontend select noninteractive" | debconf-set-selections ; \
     dpkg-reconfigure --frontend=noninteractive debconf ;
 
-# install some the packages to full system provision
+# обновление пакетов
+RUN apt update --quiet ; \
+    apt upgrade --quiet --yes ;
+
+# несколько пакетов для полной подготовки системы 
 RUN apt install --quiet --yes --no-install-recommends \
         ca-certificates \
         apt-transport-https \
         software-properties-common ;
 
-# common pakages
+# локализация
 RUN apt install --quiet --yes --no-install-recommends \
         # ru lang support
         locales language-pack-ru-base \
         # time data
         tzdata ;
-
-# ru lang
 ENV LANG="ru_RU.UTF-8" \
     LANGUAGE="ru_RU.UTF-8" \
     LC_ALL="ru_RU.UTF-8" \
@@ -43,25 +39,15 @@ RUN sed -i "s/^[^#]*ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/g" /etc/locale.gen ; \
     update-locale LANG=$LANG LC_ALL=$LC_ALL LANGUAGE=$LANGUAGE ; \
     dpkg-reconfigure --frontend=noninteractive locales ;
 
-# timezone
-ENV TIMEZONE="Europe/Moscow"
-RUN echo $TIMEZONE > /etc/timezone ; \
-    ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime ; \
-    dpkg-reconfigure --frontend=noninteractive tzdata ;
-
 # установка дополнительных пакетов
 RUN apt install --quiet --yes --no-install-recommends \
-        bash bash-completion \ 
-        make sshpass ;
+        bash make sshpass ;
 
 # установка ansible
 RUN apt install --quiet --yes --no-install-recommends \
         ansible ;
 
-# clearnup apt
+# очистка кеша пакетного менеджера
 RUN apt autoremove --yes ; \
     apt clean ; \
     rm -rf /var/lib/apt/lists/* ;
-
-# backup origin config
-RUN cp -R /etc/ansible /etc/ansible-origin ;
