@@ -41,7 +41,7 @@ RUN sed -i "s/^[^#]*ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/g" /etc/locale.gen ; \
 
 # установка дополнительных пакетов
 RUN apt install --quiet --yes --no-install-recommends \
-        bash make sshpass ;
+        bash make sshpass iputils-ping ;
 
 # установка ansible
 RUN apt install --quiet --yes --no-install-recommends \
